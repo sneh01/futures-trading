@@ -51,6 +51,8 @@ class TradingSystemRunner:
             'win_rate': result.get('win_rate'),
             'avg_pnl': result.get('avg_pnl'),
             'ending_balance': result.get('ending_balance'),
+            'trades_per_day': result.get('trades_per_day'),
+            'trades_per_week': result.get('trades_per_week'),
             'timestamp': timestamp
         }
         stats_path = f"{run_dir}/stats.txt"
