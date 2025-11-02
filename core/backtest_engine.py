@@ -155,25 +155,6 @@ class BacktestEngine:
         total_pnl = sum(t["pnl"] for t in trades)
         wins = sum(1 for t in trades if t["win"]) if trades else 0
 
-        # Calculate trades per day and per week
-        trades_per_day = None
-        trades_per_week = None
-        if trades:
-            # Try to infer date index from df if present
-            if 'date' in df.columns:
-                entry_dates = [df.loc[t['entry_idx'], 'date'] for t in trades]
-                entry_dates = pd.to_datetime(entry_dates)
-                days = (entry_dates.max() - entry_dates.min()).days + 1
-                weeks = max(1, days // 7)
-                trades_per_day = len(trades) / days if days > 0 else None
-                trades_per_week = len(trades) / weeks if weeks > 0 else None
-            elif df.index.inferred_type == 'datetime64':
-                entry_dates = [df.index[t['entry_idx']] for t in trades]
-                entry_dates = pd.to_datetime(entry_dates)
-                days = (entry_dates.max() - entry_dates.min()).days + 1
-                weeks = max(1, days // 7)
-                trades_per_day = len(trades) / days if days > 0 else None
-                trades_per_week = len(trades) / weeks if weeks > 0 else None
         return {
             "num_trades": len(trades),
             "total_pnl": total_pnl,
@@ -181,6 +162,4 @@ class BacktestEngine:
             "avg_pnl": total_pnl / len(trades) if trades else 0.0,
             "ending_balance": balance,
             "trades": trades,
-            "trades_per_day": trades_per_day,
-            "trades_per_week": trades_per_week,
         }

@@ -64,20 +64,46 @@ class TradingSystemRunner:
             yaml.dump(self.config, f, default_flow_style=False)
         print(f"Stats and config saved to {stats_path}")
 
-        # Plot equity curve
-        equity = [self.backtester.run.__defaults__[2]]  # initial_balance
+        # Plot both equity curves: by trade number and by exit date (if available)
+        import pandas as pd
+        initial_balance = self.backtester.run.__defaults__[2]
+        # By trade number
+        equity_trade = [initial_balance]
         for t in result['trades']:
-            equity.append(equity[-1] + t['pnl'])
+            equity_trade.append(equity_trade[-1] + t['pnl'])
         plt.figure(figsize=(10, 5))
-        plt.plot(equity, label='Equity Curve')
-        plt.title('Backtest Equity Curve')
+        plt.plot(equity_trade, label='Equity Curve (by trade #)')
+        plt.title('Backtest Equity Curve (by trade #)')
         plt.xlabel('Trade #')
         plt.ylabel('Equity')
         plt.legend()
-        chart_path = f"{run_dir}/equity_curve.png"
-        plt.savefig(chart_path)
+        chart_path_trade = f"{run_dir}/equity_curve_by_trade.png"
+        plt.savefig(chart_path_trade)
         plt.close()
-        print(f"Equity curve saved to {chart_path}")
+        print(f"Equity curve (by trade #) saved to {chart_path_trade}")
+
+        # By exit date (if possible)
+        equity_time = [initial_balance]
+        dates = []
+        if not trades_df.empty and 'exit_idx' in trades_df.columns and 'pnl' in trades_df.columns:
+            data_for_dates = load_price_data(data_source)
+            if 'date' in data_for_dates.columns:
+                for _, t in trades_df.iterrows():
+                    idx = int(t['exit_idx'])
+                    dates.append(data_for_dates.loc[idx, 'date'])
+                    equity_time.append(equity_time[-1] + t['pnl'])
+                equity_time = equity_time[1:]
+                dates = pd.to_datetime(dates)
+                plt.figure(figsize=(10, 5))
+                plt.plot(dates, equity_time, label='Equity Curve (by exit date)')
+                plt.title('Backtest Equity Curve (by exit date)')
+                plt.xlabel('Date')
+                plt.ylabel('Equity')
+                plt.legend()
+                chart_path_time = f"{run_dir}/equity_curve_by_time.png"
+                plt.savefig(chart_path_time)
+                plt.close()
+                print(f"Equity curve (by exit date) saved to {chart_path_time}")
 
         return result
 
