@@ -212,5 +212,4 @@ __marimo__/
 
 #ignore data and results 
 data/*txt
-results/*png
-results/*csv
+results/*
