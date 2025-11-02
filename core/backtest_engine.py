@@ -19,12 +19,32 @@ class BacktestEngine:
     def _load_strategy_module(self, name: str):
         return importlib.import_module(f"strategies.{name}")
 
-    def run(self, data: pd.DataFrame, strategy: Optional[str] = None, initial_balance: float = 10000.0, entry_prob: float = 0.02, seed: Optional[int] = None):
+    def run(self, data: Optional[pd.DataFrame] = None, strategy: Optional[str] = None, initial_balance: float = 10000.0, entry_prob: float = 0.02, seed: Optional[int] = None):
+        """Run backtest using either a strategy module or the signal_engine.
+
+        If `data` is None, generates a random walk DataFrame for demonstration.
+        Returns a dict containing summary metrics and the raw trades list.
+        """
+        if data is None:
+            # Generate random walk OHLCV data
+            import numpy as np
+            np.random.seed(seed or 42)
+            n = 10000  # number of bars
+            price = 100 + np.cumsum(np.random.randn(n))
+            df = pd.DataFrame({
+                'open': price + np.random.uniform(-0.5, 0.5, n),
+                'high': price + np.random.uniform(0, 1, n),
+                'low': price - np.random.uniform(0, 1, n),
+                'close': price,
+                'volume': np.random.randint(100, 1000, n)
+            })
+        else:
+            df = data.copy().reset_index(drop=True)
         """Run backtest using either a strategy module or the signal_engine.
 
         Returns a dict containing summary metrics and the raw trades list.
         """
-        df = data.copy().reset_index(drop=True)
+
 
         # generate signals
         if strategy:
