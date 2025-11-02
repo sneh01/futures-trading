@@ -13,10 +13,8 @@ exec:
   tick_size: 0.25
 
 strategy:
-  name: simple_random
+  name: rsi_reversal
   params:
-    ema_fast: 9
-    ema_slow: 21
     rsi_period: 14
-    rsi_entry_threshold: 60
+    rsi_entry: 30
 
