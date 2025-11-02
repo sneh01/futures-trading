@@ -10,9 +10,11 @@ class RiskEngine:
     def validate_trade(self, trade):
         return True  # Simplified placeholder
     
-    def calculate_position_size(self, account_balance, stop_loss_ticks):
+    def calculate_position_size(self, account_balance, stop_loss_ticks, tick_value=1.25):
+        # For MES: tick_size=0.25, tick_value=1.25, contract size is 1
+        # Position size = contracts = floor((account_balance * risk_per_trade) / (stop_loss_ticks * tick_value))
         risk_amount = account_balance * self.risk_per_trade
-        tick_value = 12.5
         stop_loss_value = stop_loss_ticks * tick_value
-        size = risk_amount / stop_loss_value
-        return max(1, int(size))
+        contracts = int(risk_amount // stop_loss_value)
+        contracts = max(1, min(contracts, self.max_position_size))
+        return contracts

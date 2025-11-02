@@ -1,5 +1,5 @@
 risk:
-  risk_per_trade: 0.01
+  risk_per_trade: 0.1
   risk_to_reward: 2.0
   stop_loss_ticks: 20
   max_position_size: 5
@@ -16,5 +16,7 @@ strategy:
   name: rsi_reversal
   params:
     rsi_period: 14
-    rsi_entry: 30
+    rsi_entry: 50
+    sl_pct: 0.10   # % stop loss
+    tp_pct: 0.50   # % take profit
 

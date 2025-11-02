@@ -85,13 +85,15 @@ class BacktestEngine:
             sl = _get(row, "sl", entry_price - stop_loss_ticks * tick_size * (1 if sig > 0 else -1))
             tp = _get(row, "tp", entry_price + stop_loss_ticks * tick_size * rr * (1 if sig > 0 else -1))
 
-            pos_size = self.risk_engine.calculate_position_size(balance, stop_loss_ticks)
+            # Use MES tick value from config (default 1.25)
+            tick_value = float(getattr(self.system.exec, "tick_value", 1.25))
+            pos_size = self.risk_engine.calculate_position_size(balance, stop_loss_ticks, tick_value=tick_value)
 
             # default exit to last row
             exit_price = float(df.iloc[-1].close)
             exit_idx = n - 1
-            win = False
 
+            exit_reason = None
             for j in range(i + 1, n):
                 fut = df.iloc[j]
                 low = _get(fut, "low", fut.close)
@@ -101,27 +103,31 @@ class BacktestEngine:
                     if low <= sl:
                         exit_price = sl
                         exit_idx = j
-                        win = False
+                        exit_reason = 'sl'
                         break
                     if high >= tp:
                         exit_price = tp
                         exit_idx = j
-                        win = True
+                        exit_reason = 'tp'
                         break
                 else:
                     if high >= sl:
                         exit_price = sl
                         exit_idx = j
-                        win = False
+                        exit_reason = 'sl'
                         break
                     if low <= tp:
                         exit_price = tp
                         exit_idx = j
-                        win = True
+                        exit_reason = 'tp'
                         break
 
-            pnl = (exit_price - entry_price) * sig * pos_size
+            # MES PnL: (exit - entry) * contracts * (tick_value / tick_size)
+            pnl = (exit_price - entry_price) * sig * pos_size * (tick_value / tick_size)
             balance += pnl
+
+            # Win is True if pnl > 0, else False
+            win = pnl > 0
 
             trades.append({
                 "entry_idx": i,
@@ -131,6 +137,7 @@ class BacktestEngine:
                 "pnl": pnl,
                 "pos_size": pos_size,
                 "win": win,
+                "exit_reason": exit_reason,
             })
 
             # move to the next bar after the exit
