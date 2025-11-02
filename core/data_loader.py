@@ -11,5 +11,25 @@ def load_price_data(source: str = None):
         print("Loaded mock price data")
         return df
     else:
+        # If the file is the Kibot bid/ask 1min format (no header, 10 columns), assign names and map to OHLCV
+        if source.endswith("IVE_bidask1min.txt"):
+            colnames = [
+                'Date', 'Time',
+                'BidOpen', 'BidHigh', 'BidLow', 'BidClose',
+                'AskOpen', 'AskHigh', 'AskLow', 'AskClose'
+            ]
+            df = pd.read_csv(source, names=colnames, header=None)
+            # Use Bid prices for OHLCV
+            df = df.rename(columns={
+                'BidOpen': 'open',
+                'BidHigh': 'high',
+                'BidLow': 'low',
+                'BidClose': 'close'
+            })
+            df = df[['open', 'high', 'low', 'close']].copy()
+            df['volume'] = 1000  # dummy volume
+            return df
+
+
         return pd.read_csv(source)
 
