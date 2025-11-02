@@ -19,7 +19,7 @@ class BacktestEngine:
     def _load_strategy_module(self, name: str):
         return importlib.import_module(f"strategies.{name}")
 
-    def run(self, data: Optional[pd.DataFrame] = None, strategy: Optional[str] = None, initial_balance: float = 10000.0, entry_prob: float = 0.02, seed: Optional[int] = None):
+    def run(self, data: Optional[pd.DataFrame] = None, strategy: Optional[str] = None, initial_balance: float = 1000.0, entry_prob: float = 0.02, seed: Optional[int] = None):
         """Run backtest using either a strategy module or the signal_engine.
 
         If `data` is None, generates a random walk DataFrame for demonstration.
