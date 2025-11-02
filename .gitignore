@@ -210,4 +210,7 @@ __marimo__/
 
 .DS_Store
 
+#ignore data and results 
 data/*txt
+results/*png
+results/*csv
