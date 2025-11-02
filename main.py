@@ -9,10 +9,19 @@ def main():
     parser.add_argument("--data", help="Path to price data CSV (for backtest)")
     args = parser.parse_args()
 
+    print("-----------------------------")
+    print("Starting Futures Trading Bot")
+    print("-----------------------------")
+    print(f"Mode: {args.mode if args.mode else 'from config'}")
+    print(f"Config file: {args.config}")
+
     # Load config
     cfg = load_config(args.config)
     if args.mode:
         cfg.exec.mode = args.mode
+
+    print("Loaded configuration")
+
 
     # Initialize system
     system = TradingSystemRunner(cfg)

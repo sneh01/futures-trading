@@ -11,7 +11,7 @@ A modular futures trading bot framework for both backtesting and live trading. T
 - Clear folders to add strategies, data adapters, and brokers
 
 ## Repository layout
-- app/main.py                         -> entry point to run backtests or live (root)
+- main.py                         -> entry point to run backtests or live (root)
 - config/
   - settings.yaml                  -> runtime configuration (mode, instruments, risk)
 - core/                            -> shared models, types, and config helpers
@@ -45,7 +45,7 @@ A modular futures trading bot framework for both backtesting and live trading. T
    ```
    If requirements.txt is not present, install the common libs:
    ```bash
-   pip install pydantic pandas numpy matplotlib
+   pip install pydantic pandas numpy matplotlib PyYAML
    ```
 
 2. Edit configuration (optional):
@@ -72,19 +72,27 @@ A modular futures trading bot framework for both backtesting and live trading. T
 
 - Backtest (default):
   ```bash
-  python app/main.py
+  python main.py
   ```
   The backtester reads config/settings.yaml and runs using the specified data adapter and strategy. Results and basic reports are printed to the console and saved under backtest/reports/.
 
 - Switch to Live Mode:
   Update `config/settings.yaml` setting `mode: live` and configure your broker adapter settings under `live/brokers/`. Then run:
   ```bash
-  python app/app/main.py
+  python app/main.py
   ```
 
 ## Adding a new strategy
 1. Create a file under `strategies/`, e.g. `my_strategy.py`.
-2. Implement the strategy class following the example in `strategies/ma_crossover.py` and register its name in the config under `strategy.name`.
+2. Implement the strategy following the required interface (export a `generate_signals(df, system, entry_prob=..., seed=None)` function). Register the strategy module name in the config under `strategy.name` and place any strategy parameters under `strategy.params`.
+   Example `config/settings.yaml`:
+   ```yaml
+   strategy:
+     name: "my_strategy"
+     params:
+       fast: 10
+       slow: 50
+   ```
 3. Run the backtester to validate behavior on historical data.
 
 ## Adding a broker adapter
@@ -124,7 +132,7 @@ A modular futures trading bot framework for both backtesting and live trading. T
 - Clear folders to add strategies, data adapters, and brokers
 
 ## Repository layout
-- app/main.py                         -> entry point to run backtests or live (root)
+- main.py                         -> entry point to run backtests or live (root)
 - config/
   - settings.yaml                  -> runtime configuration (mode, instruments, risk)
 - core/                            -> shared models, types, and config helpers
@@ -185,14 +193,14 @@ A modular futures trading bot framework for both backtesting and live trading. T
 
 - Backtest (default):
   ```bash
-  python app/main.py
+  python main.py
   ```
   The backtester reads config/settings.yaml and runs using the specified data adapter and strategy. Results and basic reports are printed to the console and saved under backtest/reports/.
 
 - Switch to Live Mode:
   Update `config/settings.yaml` setting `mode: live` and configure your broker adapter settings under `live/brokers/`. Then run:
   ```bash
-  python app/main.py
+  python main.py
   ```
 
 ## Adding a new strategy
