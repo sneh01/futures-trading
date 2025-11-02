@@ -1,4 +1,3 @@
-// ...existing code...
 # Futures Trading Bot
 
 A modular futures trading bot framework for both backtesting and live trading. The project separates concerns into engines (signal, risk, execution), supports pluggable strategies, and is config-driven so you can iterate quickly between backtesting and live execution.
