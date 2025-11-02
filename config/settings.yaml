@@ -9,12 +9,13 @@ exec:
   mode: backtest
   broker: mock
   symbol: ES
-  tick_value: 1.25
+  tick_value: 1.5
   tick_size: 0.25
 
 strategy:
-  name: rsi_reversal
+  name: rsi_cooldown
   params:
     rsi_period: 14
-    rsi_entry: 45 
+    rsi_entry: 45
+    cooldown_bars: 100
 
