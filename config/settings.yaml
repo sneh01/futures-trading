@@ -1,24 +1,20 @@
 risk:
   risk_per_trade: 0.1
-  risk_to_reward: 2.0
-  stop_loss_ticks: 20
-  max_position_size: 5
+  risk_to_reward: 2 # 2x reward for risk so take profit at 10 ticks
+  stop_loss_ticks: 5 # stop loss at 5 ticks for MES
+  max_position_size: 10
   max_drawdown: 0.2
 
 exec:
   mode: backtest
   broker: mock
   symbol: ES
-  tick_value: 12.5
+  tick_value: 1.25
   tick_size: 0.25
 
 strategy:
   name: rsi_reversal
   params:
     rsi_period: 14
-    rsi_entry: 50
-    sl_type: percent   # percent | dollar | ticks
-    sl_value: 0.10     # 10% if percent, $ if dollar, ticks if ticks
-    tp_type: percent   # percent | dollar | ticks
-    tp_value: 0.20     # 20% if percent, $ if dollar, ticks if ticks
+    rsi_entry: 45 
 

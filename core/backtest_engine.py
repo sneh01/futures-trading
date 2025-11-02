@@ -94,6 +94,15 @@ class BacktestEngine:
             exit_idx = n - 1
 
             exit_reason = None
+            # print(f"\n[DEBUG] New trade: idx={i}, sig={sig}, entry={entry_price:.2f}, sl={sl:.2f}, tp={tp:.2f}, pos_size={pos_size}")
+            # # Print price action for this trade
+            # for j in range(i + 1, min(i + 21, n)):
+            #     fut = df.iloc[j]
+            #     low = _get(fut, "low", fut.close)
+            #     high = _get(fut, "high", fut.close)
+            #     close = _get(fut, "close", fut.close)
+            #     print(f"  idx={j} high={high:.2f} low={low:.2f} close={close:.2f}")
+            # print("  ... (showing up to 20 bars after entry)")
             for j in range(i + 1, n):
                 fut = df.iloc[j]
                 low = _get(fut, "low", fut.close)
